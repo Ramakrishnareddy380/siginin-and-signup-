@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>
+            HI erripuksuki
+        </title>
+    </head>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script>
+        async function signup(){
+            const username=document.getElementById("signupusername").value;
+            const password=document.getElementById("signuppassword").value;
+                await axios.post("http://localhost:3000/signup",{
+                username: username,
+                password: password
+            });
+            alert("Signup successful");
+
+        }
+        async function signin() {
+    const username = document.getElementById("signinusername").value;
+    const password = document.getElementById("signinpassword").value;
+
+    try {
+        const response = await axios.post("http://localhost:3000/signin", {
+            username: username,
+            password: password
+        });
+
+        localStorage.setItem("token", response.data.token);
+        alert("Signin successful");
+    } catch (error) {
+        console.error("Signin error:", error);
+        alert("Signin failed. Please check your credentials.");
+    }
+}
+
+
+        async function getuserinformation() {
+            const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("No token found. Please sign in.");
+            return;
+        }
+
+        try {
+            const response = await axios.get("http://localhost:3000/me", {
+                headers: {
+                    token: token
+                }
+            });
+            document.getElementById("information").innerHTML = "username:" + response.data.username + " password:" + response.data.password;
+        } catch (error) {
+            console.error("Error fetching user information:", error);
+            alert("Failed to fetch user information");
+        }
+    }
+
+
+
+    </script>
+
+
+    <body>
+        <div>
+            Signup
+            <input id = "signupusername" type="text" name="username" placeholder="Username">
+            <input id = "signuppassword" type="password" name="password" placeholder="Password">
+            <button onclick="signup()">Submit</button>
+        </div>
+        <div>
+            Signin
+            <input id = "signinusername"type="text" name="username" placeholder="Username">
+            <input id="signinpassword" type="password" name="password" placeholder="Password">
+            <button onclick="signin()">Submit</button>
+        </div>
+        <div>
+            Userinformation: 
+            <div id="information"></div>
+        </div>
+        <div>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </body>
+</html>
