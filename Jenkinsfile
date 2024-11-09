@@ -1,40 +1,52 @@
 pipeline {
-    agent any  // Use any available agent
-}
-}
+    agent any
+
+    tools {
+        nodejs 'NodeJS' // Name of your NodeJS installation in Jenkins
+    }
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building...'
-                // Example build step, replace with your build command (e.g., npm install, mvn package, etc.)
-                sh 'echo Building project'
+                // Checkout the code from GitHub
+                git url: 'https://github.com/your-repo/your-project.git', branch: 'main'
             }
         }
 
-        stage('Test') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Testing...'
-                // Example test step, replace with your testing command (e.g., npm test, mvn test, etc.)
-                sh 'echo Running tests'
+                // Install Node.js dependencies
+                sh 'npm install'
             }
         }
 
-        stage('Deploy') {
+        stage('Build with Maven') {
             steps {
-                echo 'Deploying...'
-                // Example deploy step, replace with actual deployment command
-                sh 'echo Deploying project'
+                // Build the application using Maven
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Run Selenium Tests') {
+            steps {
+                // Run Selenium tests (this assumes you have a script for running your tests)
+                // You may need to adjust this command based on your test setup
+                sh 'mvn test -Dtest=YourSeleniumTestClass'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo 'Build and tests were successful!'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'Build or tests failed!'
+        }
+        always {
+            // Clean up or send notifications
+            echo 'Cleaning up...'
         }
     }
 }
+
