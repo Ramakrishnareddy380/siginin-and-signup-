@@ -4,6 +4,11 @@ pipeline {
     tools {
         nodejs 'NodeJS' // Name of your NodeJS installation in Jenkins
     }
+    tool name: 'Maven' // Replace 'Maven' with the actual configured name if different
+withEnv(["PATH+MAVEN=${tool name: 'Maven'}/bin"]) {
+    sh 'mvn clean package'
+}
+
 
     stages {
         stage('Checkout') {
