@@ -10,7 +10,7 @@ pipeline {
     stage('Test') {
       steps {
         sh 'npm install'  // Change from 'bat' to 'sh' for Unix/Linux/macOS systems
-        sh 'npm test'
+        sh 'npm run'
       }
     }
     stage('Build') {
