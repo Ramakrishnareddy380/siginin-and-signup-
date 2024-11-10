@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "signup-signin-app"
-        DOCKER_HUB_REPO = "your_dockerhub_username/signup-signin-app" // Replace with your Docker Hub repo
+        IMAGE_NAME = "backend"
+        DOCKER_HUB_REPO = "rkreddy380/backend // Replace with your Docker Hub repo
         SERVER_IP = "your_server_ip" // IP address of your deployment server
         SSH_CREDENTIALS_ID = "server-ssh-credentials" // Jenkins credentials ID for SSH access
         PORT = "3000"
