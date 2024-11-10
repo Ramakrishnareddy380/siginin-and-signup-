@@ -14,12 +14,12 @@ pipeline {
                 sh 'npm install'  // Install dependencies
             }
         }
-        stage('Docker Build and Push'){
-            steps{
-                script{
+        stage('Docker Build and Push') {
+            steps {
+                script {
                     withDockerRegistry(credentialsId: '1234') {
-                        sh'docker buit -t docker push rkreddy380/app:latest'
-                        sh'docker push'
+                        sh 'docker build -t rkreddy380/app:latest .'  // Corrected "build" command
+                        sh 'docker push rkreddy380/app:latest'        // Added correct push command
                     }
                 }
             }
