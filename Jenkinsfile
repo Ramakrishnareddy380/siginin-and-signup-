@@ -1,49 +1,25 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "backend"
-        DOCKER_HUB_REPO = "rkreddy380/backend"
-        SERVER_IP = "127.0.0.1"
-        SSH_CREDENTIALS_ID = "rkreddy380"
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
-                echo "Cloning repository from https://github.com/Ramakrishnareddy380/siginin-and-signup-.git on branch 'main'"
+                // Clone the repository from GitHub
                 git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME} ."
-                }
+                // Install npm dependencies
+                sh 'npm install'
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Run Tests') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                    sh "docker tag ${IMAGE_NAME} ${DOCKER_HUB_REPO}"
-                    sh "docker push ${DOCKER_HUB_REPO}"
-                }
-            }
-        }
-
-        stage('Deploy to Server') {
-            steps {
-                sshagent(credentials: [SSH_CREDENTIALS_ID]) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no user@${SERVER_IP} '
-                        docker pull ${DOCKER_HUB_REPO} &&
-                        docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${DOCKER_HUB_REPO}
-                    '
-                    """
-                }
+                // Run tests
+                sh 'npm test'
             }
         }
     }
@@ -51,7 +27,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up workspace...'
-            deleteDir() // Clean up workspace
+            deleteDir() // Clean up workspace after build
         }
         failure {
             echo 'The build failed!'
