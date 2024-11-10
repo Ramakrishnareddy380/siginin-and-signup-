@@ -4,8 +4,8 @@ pipeline {
     environment {
         IMAGE_NAME = "backend"
         DOCKER_HUB_REPO = "rkreddy380/backend // Replace with your Docker Hub repo
-        SERVER_IP = "your_server_ip" // IP address of your deployment server
-        SSH_CREDENTIALS_ID = "server-ssh-credentials" // Jenkins credentials ID for SSH access
+        SERVER_IP = "127.0.0.1" // IP address of your deployment server
+        SSH_CREDENTIALS_ID = "rkreddy380" // Jenkins credentials ID for SSH access
         PORT = "3000"
     }
 
