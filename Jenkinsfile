@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+            DOCKER = '/usr/bin/docker'
+        }
     tools {
         nodejs "NodeJS"// Ensure "NodeJS" is installed in Jenkins tools configuration
     }
@@ -13,9 +16,6 @@ pipeline {
             steps {
                 sh 'npm install'  // Install dependencies
             }
-        }
-        environment {
-            DOCKER = '/usr/bin/docker'
         }
         stage('Docker Build and Push') {
             steps {
