@@ -14,6 +14,11 @@ pipeline {
                 sh 'npm install'  // Install dependencies
             }
         }
+        stage('Docker Build and Push'){
+            steps{
+                script{
+                    withDockerRegistry(credentialsId: '1234') {
+                        sh'docker buit 
         stage('Build') {
             steps {
                 script {
