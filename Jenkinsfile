@@ -1,57 +1,79 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS' // Name of your NodeJS installation in Jenkins
+    environment {
+        IMAGE_NAME = "signup-signin-app"
+        DOCKER_HUB_REPO = "your_dockerhub_username/signup-signin-app" // Replace with your Docker Hub repo
+        SERVER_IP = "your_server_ip" // IP address of your deployment server
+        SSH_CREDENTIALS_ID = "server-ssh-credentials" // Jenkins credentials ID for SSH access
+        PORT = "3000"
     }
-    tool name: 'Maven' // Replace 'Maven' with the actual configured name if different
-withEnv(["PATH+MAVEN=${tool name: 'Maven'}/bin"]) {
-    sh 'mvn clean package'
-}
-
 
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                // Checkout the code from GitHub
-                git url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git', branch: 'main'
+                git 'https://github.com/yourusername/your-repo.git' // Replace with your GitHub repo
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build & Test') {
             steps {
-                // Install Node.js dependencies
-                sh 'npm install'
+                script {
+                    // Install dependencies and run tests
+                    sh 'npm install'
+                    sh 'npm test'
+                }
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build Docker Image') {
             steps {
-                // Build the application using Maven
-                sh 'mvn clean package'
+                script {
+                    // Build the Docker image
+                    sh "docker build -t ${IMAGE_NAME} ."
+                }
             }
         }
 
-        stage('Run Selenium Tests') {
+        stage('Push Docker Image') {
             steps {
-                // Run Selenium tests (this assumes you have a script for running your tests)
-                // You may need to adjust this command based on your test setup
-                sh 'mvn test -Dtest=YourSeleniumTestClass'
+                script {
+                    // Login to Docker Hub and push the image
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD"
+                        sh "docker tag ${IMAGE_NAME} ${DOCKER_HUB_REPO}"
+                        sh "docker push ${DOCKER_HUB_REPO}"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                script {
+                    // SSH into the server and deploy the Docker container
+                    sshagent(credentials: [SSH_CREDENTIALS_ID]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no user@${SERVER_IP} '
+                            docker pull ${DOCKER_HUB_REPO} &&
+                            docker stop ${IMAGE_NAME} || true &&
+                            docker rm ${IMAGE_NAME} || true &&
+                            docker run -d -p ${PORT}:3000 --name ${IMAGE_NAME} ${DOCKER_HUB_REPO}
+                        '
+                        """
+                    }
+                }
             }
         }
     }
 
     post {
-        success {
-            echo 'Build and tests were successful!'
+        always {
+            echo 'Cleaning up workspace...'
+            deleteDir() // Clean up the workspace
         }
         failure {
-            echo 'Build or tests failed!'
-        }
-        always {
-            // Clean up or send notifications
-            echo 'Cleaning up...'
+            echo 'The build failed!'
         }
     }
 }
-
