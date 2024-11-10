@@ -17,15 +17,12 @@ pipeline {
                 sh 'npm install'  // Install dependencies
             }
         }
-        stages {
         stage('Check Docker Access') {
             steps {
                 sh 'which docker || echo "Docker not found"'
                 sh 'docker --version'
             }
         }
-    }
-}
         stage('Docker Build and Push') {
             steps {
                 script {
