@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
+                echo "Cloning repository from https://github.com/Ramakrishnareddy380/siginin-and-signup-.git on branch 'main'"
                 git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
             }
         }
