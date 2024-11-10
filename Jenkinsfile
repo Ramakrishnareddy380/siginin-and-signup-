@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Login to Docker Hub and push the image
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'reddyrk380', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
                         sh "docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD"
                         sh "docker tag ${IMAGE_NAME} ${DOCKER_HUB_REPO}"
                         sh "docker push ${DOCKER_HUB_REPO}"
