@@ -18,7 +18,12 @@ pipeline {
             steps{
                 script{
                     withDockerRegistry(credentialsId: '1234') {
-                        sh'docker buit 
+                        sh'docker buit -t docker push rkreddy380/app:latest'
+                        sh'docker push'
+                    }
+                }
+            }
+        }
         stage('Build') {
             steps {
                 script {
