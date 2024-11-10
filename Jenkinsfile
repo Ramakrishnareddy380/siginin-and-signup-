@@ -12,23 +12,31 @@ pipeline {
             }
         }
 
+        stage('Install Global npm Packages') {
+            steps {
+                script {
+                    // Install global npm packages
+                    sh 'npm install -g webpack@5.75.0 eslint@7.32.0 nodemon@2.0.19'
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
-                // Clone the repository
                 git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install npm dependencies
+                // Install project dependencies
                 sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run tests
+                // Run tests (if applicable)
                 sh 'npm test'
             }
         }
