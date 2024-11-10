@@ -1,12 +1,15 @@
-
 pipeline {
   agent any
-  tools {nodejs "NodeJS"}
+  tools { nodejs "NodeJS" }
   stages {
-    stage('Build') {
+    stage('Checkout SCM') {
       steps {
         git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
-        bat 'npm install'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'npm install'  // Change from 'bat' to 'sh' for Unix/Linux/macOS systems
       }
     }
   }
