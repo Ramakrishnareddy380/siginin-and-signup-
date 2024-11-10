@@ -12,12 +12,12 @@ pipeline {
         sh 'npm install'  // Change from 'bat' to 'sh' for Unix/Linux/macOS systems
         sh 'npm test'
       }
-
-      stage('Build') {
+    }
+    stage('Build') {
       steps {
         sh 'npm run build'  // Change from 'bat' to 'sh' for Unix/Linux/macOS systems
       }
     }
   }
 }
-}
+
