@@ -14,9 +14,9 @@ pipeline {
                 sh 'npm install'  // Install dependencies
             }
         }
-         environment {
-   DOCKER = '/usr/bin/docker'
-  }
+        environment {
+            DOCKER = '/usr/bin/docker'
+        }
         stage('Docker Build and Push') {
             steps {
                 script {
