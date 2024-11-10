@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/yourusername/your-repo.git' // Replace with your GitHub repo
+                git 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git' // Replace with your GitHub repo
             }
         }
 
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh "docker build -t ${IMAGE_NAME} ."
+                    sh "docker build -t backend."
                 }
             }
         }
