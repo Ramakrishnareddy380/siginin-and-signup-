@@ -20,7 +20,6 @@ pipeline {
         stage('Check Docker Access') {
             steps {
                 sh 'which docker || echo "Docker not found"'
-                sh 'docker --version'
             }
         }
         stage('Docker Build and Push') {
