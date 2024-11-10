@@ -1,53 +1,49 @@
 pipeline {
     agent any
 
+    environment {
+        // You can configure the image name or other variables here
+        NODE_ENV = 'NodeJS'
+    }
+
     stages {
-        stage('Install Node.js') {
-            steps {
-                script {
-                    // Install Node.js and npm
-                    sh 'curl -sL https://deb.nodesource.com/setup_16.x | bash -'
-                    sh 'sudo apt-get install -y nodejs'
-                }
-            }
-        }
-
-        stage('Install Global npm Packages') {
-            steps {
-                script {
-                    // Install global npm packages
-                    sh 'npm install -g webpack@5.75.0 eslint@7.32.0 nodemon@2.0.19'
-                }
-            }
-        }
-
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
+                // Clone the project repository
+                git branch: 'main', url: 'https://github.com/YourUsername/YourRepoName.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install project dependencies
+                // Install dependencies using npm
                 sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run tests (if applicable)
+                // Run tests if any (if you have a test script defined)
                 sh 'npm test'
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                // Start the Node.js application
+                sh 'npm start'
             }
         }
     }
 
     post {
         always {
+            // Cleanup workspace
             echo 'Cleaning up workspace...'
-            deleteDir() // Clean up workspace after build
+            deleteDir()
         }
         failure {
+            // Handle failure
             echo 'The build failed!'
         }
     }
