@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        git 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
+        git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
         bat 'npm install'
       }
     }
