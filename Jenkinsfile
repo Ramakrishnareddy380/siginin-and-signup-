@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools {
         nodejs "NodeJS"// Ensure "NodeJS" is installed in Jenkins tools configuration
-        'org.jenkinsci.plugins.docker.commons.tools.DockerTool' '18.09'
     }
     stages {
         stage('Checkout SCM') {
@@ -16,7 +15,7 @@ pipeline {
             }
         }
          environment {
-    DOCKER_CERT_PATH = credentials('id-for-a-docker-cred')
+   DOCKER = '/usr/bin/docker'
   }
         stage('Docker Build and Push') {
             steps {
