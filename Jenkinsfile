@@ -2,10 +2,9 @@ pipeline {
     agent any
     tools {
         nodejs 'NodeJS' // Ensure "NodeJS" is installed in Jenkins tools configuration
-        dockerTool 'docker' // Refers to the Docker installation with the name "docker"
     }
     environment {
-        DOCKER = '/usr/local/bin/docker' // Specify the Docker path
+        DOCKER = '/usr/local/bin/docker' // Explicit Docker path
     }
     stages {
         stage('Checkout SCM') {
@@ -20,16 +19,19 @@ pipeline {
         }
         stage('Check Docker Access') {
             steps {
-                sh 'which $DOCKER || echo "Docker not found"'
-                sh '$DOCKER --version'
+                script {
+                    def dockerExists = sh(script: "if [ -x \"$DOCKER\" ]; then echo 'Docker found'; else echo 'Docker not found'; fi", returnStdout: true).trim()
+                    echo dockerExists
+                    sh "$DOCKER --version || echo 'Docker command failed'"
+                }
             }
         }
         stage('Docker Build and Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: '1234') {
-                        sh '$DOCKER build -t rkreddy380/app:latest .' // Use Docker for building
-                        sh '$DOCKER push rkreddy380/app:latest'      // Push Docker image
+                        sh "$DOCKER build -t rkreddy380/app:latest ."  // Use Docker for building
+                        sh "$DOCKER push rkreddy380/app:latest"       // Push Docker image
                     }
                 }
             }
