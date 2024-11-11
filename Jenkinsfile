@@ -26,14 +26,19 @@ pipeline {
                 }
             }
         }
-        stage('Docker Build and Push') {
-            steps {
-                script {
-                     sh 'docker --version'
-                    sh "$DOCKER_PATH build -t rkreddy380/app ."  // Build Docker image
+        stages {
+            stage('Build and Push Docker Image') {
+                steps {
+                    script {
+                        sh '/usr/local/bin/docker --version'
+                        sh '/usr/local/bin/docker build -t rkreddy380/app .'
+                        sh '/usr/local/bin/docker push rkreddy380/app'
                     }
                 }
             }
+        }
+    }
+
         stage('Build') {
             steps {
                 script {
