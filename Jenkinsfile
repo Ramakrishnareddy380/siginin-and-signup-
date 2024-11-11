@@ -30,8 +30,8 @@ pipeline {
             steps {
                 script {
                     sh '/usr/local/bin/docker --version'
-                    sh '/usr/local/bin/docker build -t rkreddy380/app .'
-                    sh '/usr/local/bin/docker push rkreddy380/app'
+                    sh '/usr/local/bin/docker build -t app .'
+                    sh '/usr/local/bin/docker push app'
                     }
                 }
             }
