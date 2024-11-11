@@ -30,9 +30,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: '1234') {
-                        // Use DOCKER_PATH for consistency
-                        sh "$DOCKER_PATH build -t backend ."  // Build Docker image
-                        sh "$DOCKER_PATH push backend"       // Push Docker image
+                        sh "$DOCKER_PATH build -t rkreddy380/backend:latest ."  // Build Docker image
+                        sh "$DOCKER_PATH push rkreddy380/backend:latest"        // Push Docker image
                     }
                 }
             }
