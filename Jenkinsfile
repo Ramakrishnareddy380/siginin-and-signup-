@@ -7,6 +7,10 @@ pipeline {
         REGISTRY = 'docker.io'          // Docker registry URL
     }
 
+    tools {
+        nodejs 'NodeJS' // Use NodeJS tool configuration
+    }
+
     stages {
         stage('Checkout SCM') {
             steps {
