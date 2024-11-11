@@ -1,66 +1,46 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER = '/usr/local/bin/docker' // Path to Docker
-        IMAGE_NAME = 'rkreddy380/docker' // Docker image name
-        REGISTRY = 'docker.io'          // Docker registry URL
-    }
-
     tools {
-        nodejs 'NodeJS' // Use NodeJS tool configuration
+        nodejs "NodeJS"  // Ensure "NodeJS" is installed in Jenkins tools configuration
     }
-
     stages {
         stage('Checkout SCM') {
             steps {
-                // Clone the repository
                 git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
             }
         }
-        
         stage('Install Dependencies') {
             steps {
-                // Install Node.js dependencies
-                sh 'npm install'
+                sh 'npm install'  // Install dependencies
             }
         }
-        
-        stage('Build Docker Image') {
+        stage('Check Docker Access') {
             steps {
-                script {
-                    // Build the Docker image
-                    sh "${DOCKER} build -t ${IMAGE_NAME}:latest ."
-                }
+                sh 'which docker || echo "Docker not found"'
+                sh 'docker --version'
             }
         }
-        
-        stage('Run Docker Image') {
+        stage('Docker Build and Push') {
             steps {
                 script {
-                    // Run the Docker container
-                    sh "${DOCKER} run -d -p 3000:3000 ${IMAGE_NAME}:latest"
-                }
-            }
-        }
-        
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Push the Docker image to DockerHub
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: "https://${REGISTRY}"]) {
-                        sh "${DOCKER} push ${IMAGE_NAME}:latest"
+                    withDockerRegistry(credentialsId: '1234') {
+                        sh 'docker build -t rkreddy380/app:latest .'  // Docker build command
+                        sh 'docker push rkreddy380/app:latest'        // Docker push command
                     }
                 }
             }
         }
-    }
-
-    post {
-        always {
-            // Clean up Docker images and containers after the job
-            sh "${DOCKER} ps -aq | xargs -I {} ${DOCKER} rm -f {} || true"
-            sh "${DOCKER} rmi ${IMAGE_NAME}:latest || true"
+        stage('Build') {
+            steps {
+                script {
+                    def buildScriptExists = sh(script: "npm run | grep build", returnStatus: true) == 0
+                    if (buildScriptExists) {
+                        sh 'npm run build'
+                    } else {
+                        echo 'No build script defined.'
+                    }
+                }
+            }
         }
     }
 }
