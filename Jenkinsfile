@@ -1,52 +1,62 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'NodeJS' // Ensure "NodeJS" is installed in Jenkins tools configuration
-    }
+
     environment {
-        DOCKER_PATH = '/usr/local/bin/docker' // Explicit path to the Docker executable
+        DOCKER = '/usr/local/bin/docker' // Path to Docker
+        IMAGE_NAME = 'rkreddy380/docker' // Docker image name
+        REGISTRY = 'docker.io'          // Docker registry URL
     }
+
     stages {
         stage('Checkout SCM') {
             steps {
+                // Clone the repository
                 git branch: 'main', url: 'https://github.com/Ramakrishnareddy380/siginin-and-signup-.git'
             }
         }
+        
         stage('Install Dependencies') {
             steps {
-                sh 'npm install' // Install dependencies
+                // Install Node.js dependencies
+                sh 'npm install'
             }
         }
-        stage('Check Docker Access') {
+        
+        stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerExists = sh(script: "if [ -x \"$DOCKER_PATH\" ]; then echo 'Docker found'; else echo 'Docker not found'; fi", returnStdout: true).trim()
-                    echo dockerExists
-                    sh "$DOCKER_PATH --version || echo 'Docker command failed'"
+                    // Build the Docker image
+                    sh "${DOCKER} build -t ${IMAGE_NAME}:latest ."
                 }
             }
         }
-        stage('Docker Build and Push') {
+        
+        stage('Run Docker Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: '1234') {
-                        sh "$DOCKER_PATH build -t rkreddy380/docker:tag123 ."  // Build Docker image
-                        sh "$DOCKER_PATH push rkreddy380/docker:tag123"        // Push Docker image
+                    // Run the Docker container
+                    sh "${DOCKER} run -d -p 3000:3000 ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Push the Docker image to DockerHub
+                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: "https://${REGISTRY}"]) {
+                        sh "${DOCKER} push ${IMAGE_NAME}:latest"
                     }
                 }
             }
         }
-        stage('Build') {
-            steps {
-                script {
-                    def buildScriptExists = sh(script: "npm run | grep build", returnStatus: true) == 0
-                    if (buildScriptExists) {
-                        sh 'npm run build'
-                    } else {
-                        echo 'No build script defined.'
-                    }
-                }
-            }
+    }
+
+    post {
+        always {
+            // Clean up Docker images and containers after the job
+            sh "${DOCKER} ps -aq | xargs -I {} ${DOCKER} rm -f {} || true"
+            sh "${DOCKER} rmi ${IMAGE_NAME}:latest || true"
         }
     }
 }
