@@ -4,7 +4,7 @@ pipeline {
         nodejs 'NodeJS' // Ensure "NodeJS" is installed in Jenkins tools configuration
     }
     environment {
-        DOCKER_PATH = '/usr/local/bin/docker-credential-desktop' // Explicit path to the Docker executable
+        DOCKER_PATH = '/usr/local/bin/docker' // Explicit path to the Docker executable
     }
     stages {
         stage('Checkout SCM') {
@@ -29,9 +29,9 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    sh '/usr/local/bin/docker-credential-desktop --version'
-                    sh '/usr/local/bin/docker-credential-desktop build -t app .'
-                    sh '/usr/local/bin/docker-credential-desktop push app'
+                    sh '/usr/local/bin/docker --version'
+                    sh '/usr/local/bin/docker build -t app .'
+                   
                     }
                 }
             }
