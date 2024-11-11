@@ -5,6 +5,8 @@ pipeline {
     }
     environment {
         DOCKER_PATH = '/usr/local/bin/docker '// Explicit path to the Docker executable
+        DOCKER_IMAGE = 'rkreddy380/backend'
+
     }
     stages {
         stage('Checkout SCM') {
@@ -30,7 +32,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: '1234') {
-                        sh "$DOCKER_PATH build -t rkreddy380/backend:latest ."  // Build Docker image
+                         sh "docker build -t ${DOCKER_IMAGE} ." // Build Docker image
                         sh "$DOCKER_PATH push rkreddy380/backend:latest"        // Push Docker image
                     }
                 }
