@@ -1,7 +1,10 @@
 pipeline {
     agent any
+    environment {
+        docker = "/usr/local/bin"  // Add Docker path explicitly
+    }
     tools {
-        nodejs "NodeJS" // Ensure "NodeJS" is installed in Jenkins tools configuration
+        nodejs "NodeJS"  // Ensure "NodeJS" is installed in Jenkins tools configuration
     }
     stages {
         stage('Checkout SCM') {
