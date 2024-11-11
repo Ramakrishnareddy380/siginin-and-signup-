@@ -29,8 +29,8 @@ pipeline {
         stage('Docker Build and Push') {
             steps {
                 script {
-                    
-                        sh "$DOCKER_PATH build -t rkreddy380/app ."  // Build Docker image
+                     sh 'docker --version'
+                    sh "$DOCKER_PATH build -t rkreddy380/app ."  // Build Docker image
                     }
                 }
             }
