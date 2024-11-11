@@ -1,12 +1,8 @@
 pipeline {
     agent any
     tools {
-        nodejs 'NodeJS' // Ensure "NodeJS" is installed in Jenkins tools configuration
-    }
-    environment {
-        DOCKER_PATH = '/usr/local/bin/docker '// Explicit path to the Docker executable
-        DOCKER_IMAGE = 'rkreddy380/backend'
-
+        nodejs 'NodeJS'          // Ensure Node.js is installed
+        dockerTool 'docker'       // Use the Docker tool configured in Jenkins
     }
     stages {
         stage('Checkout SCM') {
@@ -16,24 +12,15 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install' // Install dependencies
-            }
-        }
-        stage('Check Docker Access') {
-            steps {
-                script {
-                    def dockerExists = sh(script: "if [ -x \"$DOCKER_PATH\" ]; then echo 'Docker found'; else echo 'Docker not found'; fi", returnStdout: true).trim()
-                    echo dockerExists
-                    sh "$DOCKER_PATH --version || echo 'Docker command failed'"
-                }
+                sh 'npm install'
             }
         }
         stage('Docker Build and Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: '1234') {
-                         sh "docker build -t ${DOCKER_IMAGE} ." // Build Docker image
-                        sh "$DOCKER_PATH push rkreddy380/backend:latest"        // Push Docker image
+                        sh "docker build -t rkreddy380/backend:latest ."  // Build Docker image
+                        sh "docker push rkreddy380/backend:latest"        // Push Docker image
                     }
                 }
             }
