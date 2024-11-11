@@ -25,8 +25,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: '1234') {
-                        sh 'docker build -t rkreddy380/app:tag123 .'  // Docker build command
-                        sh 'docker push rkreddy380/app:tag123'        // Docker push command
+                        sh 'docker build -t rkreddy380/app .'  // Docker build command
+                        sh 'docker push rkreddy380/app'        // Docker push command
                     }
                 }
             }
